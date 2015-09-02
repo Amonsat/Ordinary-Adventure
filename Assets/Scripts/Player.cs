@@ -51,9 +51,9 @@ public class Player : MonoBehaviour
 	{
 		if (!dead) {
 
-//			#if UNITY_STANDALONE_WIN
+			#if UNITY_STANDALONE_WIN
 			moveSpeed = Input.GetAxis ("Horizontal");
-//			#endif
+			#endif
 
 			anim.SetFloat ("Speed", Mathf.Abs (moveSpeed));
 			transform.position += new Vector3 (moveSpeed, 0, 0) * .2f;

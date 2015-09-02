@@ -6,7 +6,8 @@ public class GM : MonoBehaviour
 {
 	private int coins = 0;
 	public Text coinsText;
-	public GameObject gameover;
+	public GameObject gameoverui;
+	public GameObject gamestartui;
 
 
 	public int Coins {
@@ -27,6 +28,8 @@ public class GM : MonoBehaviour
 			instance = this;
 		else
 			Destroy (gameObject);
+
+		gamestartui.SetActive (true);
 	}
 	
 	// Update is called once per frame
@@ -40,18 +43,16 @@ public class GM : MonoBehaviour
 	public void Reload ()
 	{
 		Application.LoadLevel (Application.loadedLevel);
-//		StartCoroutine (WaitThenReload ());
-	}
-
-	IEnumerator WaitThenReload ()
-	{
-		yield return new WaitForSeconds (3);
-		Application.LoadLevel (Application.loadedLevel);
 	}
 
 	public void GameOver ()
 	{
-		gameover.SetActive (true);
+		gameoverui.SetActive (true);
+	}
+
+	public void GameStart ()
+	{
+		gamestartui.SetActive (false);
 	}
 
 	public void Exit ()
