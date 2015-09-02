@@ -120,6 +120,7 @@ MonoBehaviour:
   bounds: 4
   speed: .0500000007
   dead: 0
+  soundOh: {fileID: 8300000, guid: 503451283a8f8ed47a43b0044626fd69, type: 3}
 --- !u!212 &21207614
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -161,6 +162,10 @@ Prefab:
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: soundOh
+      value: 
+      objectReference: {fileID: 8300000, guid: 503451283a8f8ed47a43b0044626fd69, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 158828}

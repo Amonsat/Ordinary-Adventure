@@ -5,7 +5,8 @@ public class Coin3D : MonoBehaviour
 {
 
 	public float rotateSpeed = 2f;
-	
+	public AudioClip soundPickUp;
+
 	void Update ()
 	{
 		transform.Rotate (Vector3.forward * rotateSpeed);
@@ -13,9 +14,10 @@ public class Coin3D : MonoBehaviour
 	
 	void OnTriggerEnter2D (Collider2D other)
 	{
-//		print (other.tag);
 		if (!other.gameObject.CompareTag ("Player"))
 			return;
+
+		AudioSource.PlayClipAtPoint (soundPickUp, transform.position);
 		GM.instance.Coins++;
 		Destroy (gameObject);
 	}

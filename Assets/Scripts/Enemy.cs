@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
 	public float bounds;
 	public float speed;
 	public bool dead;
+	public AudioClip soundOh;
 
 	private bool facingRight = true;
 	private int direction = 1; 
@@ -50,13 +51,25 @@ public class Enemy : MonoBehaviour
 //		print (other.gameObject.tag);
 		if (!other.gameObject.CompareTag ("Player"))
 			return;
+		other.gameObject.GetComponent<Player> ().die ();
 
-		other.gameObject.GetComponent<Player> ().dead = true;
-		other.gameObject.GetComponent<Collider2D> ().isTrigger = true;
-		other.gameObject.GetComponent<Rigidbody2D> ().isKinematic = true;
-		other.gameObject.GetComponent<Animator> ().SetTrigger ("Dead");
+//		other.gameObject.GetComponent<Player> ().dead = true;
+//		other.gameObject.GetComponent<Collider2D> ().isTrigger = true;
+//		other.gameObject.GetComponent<Rigidbody2D> ().isKinematic = true;
+//		other.gameObject.GetComponent<Animator> ().SetTrigger ("Dead");
+
 //		GM.instance.Reload ();
 //		yield WaitForSeconds(5);
 //		Application.LoadLevel (Application.loadedLevel);
+	}
+
+	public void die ()
+	{
+		AudioSource.PlayClipAtPoint (soundOh, transform.position);
+		GetComponent<Animator> ().SetTrigger ("Dead");
+		GetComponent<Collider2D> ().enabled = false;
+		GetComponent<Rigidbody2D> ().isKinematic = true;
+		GetComponent<Enemy> ().dead = true;
+		transform.position += new Vector3 (0, -.2f, 0);
 	}
 }

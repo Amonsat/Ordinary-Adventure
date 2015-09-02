@@ -6,6 +6,7 @@ public class GM : MonoBehaviour
 {
 	private int coins = 0;
 	public Text coinsText;
+	public GameObject gameover;
 
 
 	public int Coins {
@@ -31,7 +32,9 @@ public class GM : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-	
+		if (Input.GetKey (KeyCode.Escape)) {
+			Exit ();
+		}
 	}
 
 	public void Reload ()
@@ -46,5 +49,13 @@ public class GM : MonoBehaviour
 		Application.LoadLevel (Application.loadedLevel);
 	}
 
+	public void GameOver ()
+	{
+		gameover.SetActive (true);
+	}
 
+	public void Exit ()
+	{
+		Application.Quit ();
+	}
 }
