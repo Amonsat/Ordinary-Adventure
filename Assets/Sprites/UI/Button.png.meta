@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: e1b488907d28cbf41b1c336a671168d9
-timeCreated: 1441193359
+timeCreated: 1441710823
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -8,6 +8,7 @@ TextureImporter:
     21300002: Button_Right
     21300004: Button_Up
     21300006: Button_Exit
+    21300008: Button_ReturnInTime
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -90,6 +91,16 @@ TextureImporter:
         y: 2310
         width: 186
         height: 191
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Button_ReturnInTime
+      rect:
+        serializedVersion: 2
+        x: 3092
+        y: 1655
+        width: 183
+        height: 194
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - PlayerSprite
+  - EnemySprite
+  - TimeControlLine
   layers:
   - Default
   - TransparentFX

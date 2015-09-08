@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
+
 
 public class Player : MonoBehaviour
 {
@@ -25,6 +28,13 @@ public class Player : MonoBehaviour
 	private Rigidbody2D rb2d;
 	private AudioSource aud;
 	private float moveSpeed;
+	private SpriteRenderer playerSpriteRenderer;
+
+	private LimitedSizeStack<Vector3> positions = new LimitedSizeStack<Vector3> ();
+	private LimitedSizeStack<Sprite> sprites = new LimitedSizeStack<Sprite> ();
+	private bool returnInTime = false;
+
+	public Slider timeControlLine;
 
 	
 	void Awake ()
@@ -32,6 +42,8 @@ public class Player : MonoBehaviour
 		anim = GetComponent<Animator> ();
 		rb2d = GetComponent<Rigidbody2D> ();
 		aud = GetComponent<AudioSource> ();
+		playerSpriteRenderer = GetComponentInChildren<SpriteRenderer> ();
+//		timeControlLine = (Slider)GameObject.FindGameObjectWithTag ("TimeControlLine");
 	}
 
 	void Update ()
@@ -45,15 +57,32 @@ public class Player : MonoBehaviour
 
 			anim.SetBool ("Grounded", grounded);
 		}
+
+		if (Input.GetButton ("TimeControl")) {
+			Time.timeScale = .5f;
+			rb2d.isKinematic = true;
+			returnInTime = true;
+			anim.enabled = false;
+		}
+
+		if (Input.GetButtonUp ("TimeControl")) {
+			Time.timeScale = 1;
+			rb2d.isKinematic = false;
+			returnInTime = false;
+			anim.enabled = true;
+		}
+
+		timeControlLine.value = positions.Count;
 	}
-	
+
 	void FixedUpdate ()
 	{
-		if (!dead) {
+		Vector3 oldPosition = transform.position;
 
-			#if UNITY_STANDALONE_WIN
-			moveSpeed = Input.GetAxis ("Horizontal");
-			#endif
+		if (!dead) {
+			if (SystemInfo.deviceType == DeviceType.Desktop)
+				moveSpeed = Input.GetAxis ("Horizontal");
+
 
 			anim.SetFloat ("Speed", Mathf.Abs (moveSpeed));
 			transform.position += new Vector3 (moveSpeed, 0, 0) * .2f;
@@ -71,7 +100,20 @@ public class Player : MonoBehaviour
 				rb2d.AddForce (new Vector2 (0f, jumpForce));
 				jump = false;
 			}
+
+
+			if (returnInTime && positions.Count > 0) {
+				transform.position = positions.Pop ();
+				playerSpriteRenderer.sprite = sprites.Pop ();
+			}
+
+			if (!returnInTime && transform.position != oldPosition) {
+				positions.Push (transform.position);
+				sprites.Push (playerSpriteRenderer.sprite);
+			}
 		}
+
+
 	}
 	
 	void Flip ()
@@ -99,6 +141,23 @@ public class Player : MonoBehaviour
 
 	public void Jump ()
 	{
-		jump = true;
+		if (grounded)
+			jump = true;
+	}
+
+	public void ReturnInTime ()
+	{
+		Time.timeScale = .5f;
+		rb2d.isKinematic = true;
+		returnInTime = true;
+		anim.enabled = false;
+	}
+
+	public void ReturnInTimeStop ()
+	{
+		Time.timeScale = 1;
+		rb2d.isKinematic = false;
+		returnInTime = false;
+		anim.enabled = true;
 	}
 }

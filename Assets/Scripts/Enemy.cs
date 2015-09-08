@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Enemy : MonoBehaviour
 {
@@ -12,6 +13,21 @@ public class Enemy : MonoBehaviour
 	private bool facingRight = true;
 	private int direction = 1; 
 	private float startPositionX;
+	private SpriteRenderer spriteRenderer;
+	private Rigidbody2D rb2d;
+	private Animator anim;
+
+	private LimitedSizeStack<Vector3> positions = new LimitedSizeStack<Vector3> ();
+	private LimitedSizeStack<Sprite> sprites = new LimitedSizeStack<Sprite> ();
+	private bool returnInTime = false;
+
+
+	void Awake ()
+	{
+		rb2d = GetComponent<Rigidbody2D> ();
+		anim = GetComponent<Animator> ();
+		spriteRenderer = GetComponentInChildren<SpriteRenderer> ();
+	}
 	// Use this for initialization
 	void Start ()
 	{
@@ -22,19 +38,50 @@ public class Enemy : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if (!dead)
-			transform.position += new Vector3 (speed, 0, 0) * direction;
-
-		if (transform.position.x > startPositionX + bounds) {
-			direction = -1;
-		} else if (transform.position.x < startPositionX - bounds) {
-			direction = 1;
+		if (Input.GetButton ("TimeControl")) {
+//			Time.timeScale = .5f;
+			rb2d.isKinematic = true;
+			returnInTime = true;
+			anim.enabled = false;
+		}
+		
+		if (Input.GetButtonUp ("TimeControl")) {
+//			Time.timeScale = 1;
+			rb2d.isKinematic = false;
+			returnInTime = false;
+			anim.enabled = true;
 		}
 
-		if (direction > 0 && !facingRight) {
-			Flip ();
-		} else if (direction < 0 && facingRight) {
-			Flip ();
+	}
+
+	void FixedUpdate ()
+	{
+		Vector3 oldPosition = transform.position;
+
+		if (!dead) {
+			transform.position += new Vector3 (speed, 0, 0) * direction * Time.deltaTime;
+		
+			if (transform.position.x > startPositionX + bounds) {
+				direction = -1;
+			} else if (transform.position.x < startPositionX - bounds) {
+				direction = 1;
+			}
+		
+			if (direction > 0 && !facingRight) {
+				Flip ();
+			} else if (direction < 0 && facingRight) {
+				Flip ();
+			}
+
+			if (returnInTime && positions.Count > 0) {
+				transform.position = positions.Pop ();
+				spriteRenderer.sprite = sprites.Pop ();
+			}
+
+			if (!returnInTime && transform.position != oldPosition) {
+				positions.Push (transform.position);
+				sprites.Push (spriteRenderer.sprite);
+			}
 		}
 	}
 
@@ -48,19 +95,9 @@ public class Enemy : MonoBehaviour
 
 	void OnCollisionEnter2D (Collision2D other)
 	{
-//		print (other.gameObject.tag);
 		if (!other.gameObject.CompareTag ("Player"))
 			return;
 		other.gameObject.GetComponent<Player> ().die ();
-
-//		other.gameObject.GetComponent<Player> ().dead = true;
-//		other.gameObject.GetComponent<Collider2D> ().isTrigger = true;
-//		other.gameObject.GetComponent<Rigidbody2D> ().isKinematic = true;
-//		other.gameObject.GetComponent<Animator> ().SetTrigger ("Dead");
-
-//		GM.instance.Reload ();
-//		yield WaitForSeconds(5);
-//		Application.LoadLevel (Application.loadedLevel);
 	}
 
 	public void die ()
@@ -71,5 +108,21 @@ public class Enemy : MonoBehaviour
 		GetComponent<Rigidbody2D> ().isKinematic = true;
 		GetComponent<Enemy> ().dead = true;
 		transform.position += new Vector3 (0, -.2f, 0);
+	}
+
+	public void ReturnInTime ()
+	{
+//		Time.timeScale = .5f;
+		rb2d.isKinematic = true;
+		returnInTime = true;
+		anim.enabled = false;
+	}
+	
+	public void ReturnInTimeStop ()
+	{
+//		Time.timeScale = 1;
+		rb2d.isKinematic = false;
+		returnInTime = false;
+		anim.enabled = true;
 	}
 }
