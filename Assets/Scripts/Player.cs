@@ -19,6 +19,11 @@ public class Player : MonoBehaviour
 	public float jumpForce = 1000f;
 	public Transform groundCheck;
 	public bool dead = false;
+	public GameObject kunai;
+	public Transform kunaiSpawn;
+	public float fireRate;
+
+	private float nextFire;
 
 	public AudioClip soundJump;
 	public AudioClip soundDie;
@@ -29,6 +34,7 @@ public class Player : MonoBehaviour
 	private AudioSource aud;
 	private float moveSpeed;
 	private SpriteRenderer playerSpriteRenderer;
+	private AudioSource audioSource;
 
 	private LimitedSizeStack<Vector3> positions = new LimitedSizeStack<Vector3> ();
 	private LimitedSizeStack<Sprite> sprites = new LimitedSizeStack<Sprite> ();
@@ -43,6 +49,7 @@ public class Player : MonoBehaviour
 		rb2d = GetComponent<Rigidbody2D> ();
 		aud = GetComponent<AudioSource> ();
 		playerSpriteRenderer = GetComponentInChildren<SpriteRenderer> ();
+		audioSource = GameObject.Find ("GM").GetComponent<AudioSource> ();
 //		timeControlLine = (Slider)GameObject.FindGameObjectWithTag ("TimeControlLine");
 	}
 
@@ -59,17 +66,15 @@ public class Player : MonoBehaviour
 		}
 
 		if (Input.GetButton ("TimeControl")) {
-			Time.timeScale = .5f;
-			rb2d.isKinematic = true;
-			returnInTime = true;
-			anim.enabled = false;
+			ReturnInTime ();
 		}
 
 		if (Input.GetButtonUp ("TimeControl")) {
-			Time.timeScale = 1;
-			rb2d.isKinematic = false;
-			returnInTime = false;
-			anim.enabled = true;
+			ReturnInTimeStop ();
+		}
+
+		if (Input.GetButtonDown ("Fire2")) {
+			Throw ();
 		}
 
 		timeControlLine.value = positions.Count;
@@ -151,6 +156,12 @@ public class Player : MonoBehaviour
 		rb2d.isKinematic = true;
 		returnInTime = true;
 		anim.enabled = false;
+		audioSource.pitch = .5f;
+
+		GameObject[] enemies = GameObject.FindGameObjectsWithTag ("Enemy");
+		foreach (GameObject enemy in enemies) {
+			enemy.GetComponent<Enemy> ().ReturnInTime ();
+		}
 	}
 
 	public void ReturnInTimeStop ()
@@ -159,5 +170,20 @@ public class Player : MonoBehaviour
 		rb2d.isKinematic = false;
 		returnInTime = false;
 		anim.enabled = true;
+		audioSource.pitch = 1f;
+
+		GameObject[] enemies = GameObject.FindGameObjectsWithTag ("Enemy");
+		foreach (GameObject enemy in enemies) {
+			enemy.GetComponent<Enemy> ().ReturnInTimeStop ();
+		}
+	}
+
+	public void Throw ()
+	{
+		if (Time.time > nextFire) {
+			anim.SetTrigger ("Throw");
+			nextFire = Time.time + fireRate;
+			Instantiate (kunai, kunaiSpawn.position, kunaiSpawn.rotation);
+		}
 	}
 }

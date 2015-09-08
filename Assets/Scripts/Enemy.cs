@@ -38,20 +38,6 @@ public class Enemy : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if (Input.GetButton ("TimeControl")) {
-//			Time.timeScale = .5f;
-			rb2d.isKinematic = true;
-			returnInTime = true;
-			anim.enabled = false;
-		}
-		
-		if (Input.GetButtonUp ("TimeControl")) {
-//			Time.timeScale = 1;
-			rb2d.isKinematic = false;
-			returnInTime = false;
-			anim.enabled = true;
-		}
-
 	}
 
 	void FixedUpdate ()
@@ -95,6 +81,9 @@ public class Enemy : MonoBehaviour
 
 	void OnCollisionEnter2D (Collision2D other)
 	{
+		if (other.gameObject.CompareTag ("Kunai"))
+			die ();
+
 		if (!other.gameObject.CompareTag ("Player"))
 			return;
 		other.gameObject.GetComponent<Player> ().die ();
@@ -112,7 +101,6 @@ public class Enemy : MonoBehaviour
 
 	public void ReturnInTime ()
 	{
-//		Time.timeScale = .5f;
 		rb2d.isKinematic = true;
 		returnInTime = true;
 		anim.enabled = false;
@@ -120,7 +108,6 @@ public class Enemy : MonoBehaviour
 	
 	public void ReturnInTimeStop ()
 	{
-//		Time.timeScale = 1;
 		rb2d.isKinematic = false;
 		returnInTime = false;
 		anim.enabled = true;
