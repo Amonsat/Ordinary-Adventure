@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using DG.Tweening;
+//using DG.Tweening;
 
 public class SeaMoving : MonoBehaviour
 {

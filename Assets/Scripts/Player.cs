@@ -73,7 +73,7 @@ public class Player : MonoBehaviour
 			ReturnInTimeStop ();
 		}
 
-		if (Input.GetButtonDown ("Fire2")) {
+		if (Input.GetButtonDown ("Throw")) {
 			Throw ();
 		}
 
@@ -146,6 +146,7 @@ public class Player : MonoBehaviour
 
 	public void Jump ()
 	{
+//		print ("jump");
 		if (grounded)
 			jump = true;
 	}
@@ -186,4 +187,9 @@ public class Player : MonoBehaviour
 			Instantiate (kunai, kunaiSpawn.position, kunaiSpawn.rotation);
 		}
 	}
+
+//	void OnCollisionEnter2D (Collision2D other)
+//	{
+//		print (other.gameObject.tag);
+//	}
 }

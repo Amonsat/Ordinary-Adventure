@@ -9,6 +9,8 @@ TagManager:
   - EnemySprite
   - TimeControlLine
   - Kunai
+  - GroundPlatform
+  - Ground
   layers:
   - Default
   - TransparentFX

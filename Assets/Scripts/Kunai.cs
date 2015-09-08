@@ -25,7 +25,9 @@ public class Kunai : MonoBehaviour
 
 	void OnCollisionEnter2D (Collision2D other)
 	{
-		if (other.gameObject.CompareTag ("Enemy"))
+//		print (other.gameObject.tag);
+		if (other.gameObject.CompareTag ("Enemy") || other.gameObject.CompareTag ("Ground"))
 			Destroy (gameObject);
+
 	}
 }
