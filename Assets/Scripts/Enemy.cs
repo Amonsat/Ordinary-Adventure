@@ -84,9 +84,8 @@ public class Enemy : MonoBehaviour
 		if (other.gameObject.CompareTag ("Kunai"))
 			die ();
 
-		if (!other.gameObject.CompareTag ("Player"))
-			return;
-		other.gameObject.GetComponent<Player> ().die ();
+		if (other.gameObject.CompareTag ("Player"))
+			other.gameObject.GetComponent<Player> ().TakeDamage (1);
 	}
 
 	public void die ()

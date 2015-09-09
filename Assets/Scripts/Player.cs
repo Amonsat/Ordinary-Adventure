@@ -23,10 +23,22 @@ public class Player : MonoBehaviour
 	public Transform kunaiSpawn;
 	public float fireRate;
 
+	public Slider healthSlider;
+
+	public int health = 3;
+//	public int Health {
+//		get { return health; }
+//		set { 
+//			health = value; 
+//			healthSlider.value = health;
+//		}
+//	}
+
 	private float nextFire;
 
 	public AudioClip soundJump;
 	public AudioClip soundDie;
+	public AudioClip soundNo;
 	
 	private bool grounded = false;
 	private Animator anim;
@@ -55,6 +67,8 @@ public class Player : MonoBehaviour
 //		timeControlLine = (Slider)GameObject.FindGameObjectWithTag ("TimeControlLine");
 	}
 
+
+
 	void Update ()
 	{
 		if (!dead) {
@@ -65,25 +79,35 @@ public class Player : MonoBehaviour
 			}
 
 			anim.SetBool ("Grounded", grounded);
+
+			if (Input.GetButton ("TimeControl")) {
+				ReturnInTime ();
+			}
+			
+			if (Input.GetButtonUp ("TimeControl")) {
+				ReturnInTimeStop ();
+			}
+			
+			if (Input.GetButtonDown ("Throw")) {
+				Throw ();
+			}
+			
+			if (Input.GetButtonDown ("Attack")) {
+				Attack ();
+			}
+
+			if (health == 0) {
+				die ();
+			}
+
+			timeControlLine.value = positions.Count;
 		}
 
-		if (Input.GetButton ("TimeControl")) {
-			ReturnInTime ();
-		}
 
-		if (Input.GetButtonUp ("TimeControl")) {
-			ReturnInTimeStop ();
-		}
 
-		if (Input.GetButtonDown ("Throw")) {
-			Throw ();
-		}
 
-		if (Input.GetButtonDown ("Attack")) {
-			Attack ();
-		}
 
-		timeControlLine.value = positions.Count;
+
 	}
 
 	void FixedUpdate ()
@@ -137,10 +161,10 @@ public class Player : MonoBehaviour
 
 	public void die ()
 	{
-		GetComponent<Player> ().dead = true;
+		dead = true;
 		GetComponent<Collider2D> ().isTrigger = true;
-		GetComponent<Rigidbody2D> ().isKinematic = true;
-		GetComponent<Animator> ().SetTrigger ("Dead");
+		rb2d.isKinematic = true;
+		anim.SetTrigger ("Dead");
 
 		GM.instance.GameOver ();
 	}
@@ -213,6 +237,15 @@ public class Player : MonoBehaviour
 				hit.collider.gameObject.GetComponent<Enemy> ().die ();
 			}
 		}
+	}
+
+	public void TakeDamage (int damage)
+	{
+		health -= damage;
+		healthSlider.value = health;
+		
+		aud.clip = soundNo;
+		aud.Play ();
 	}
 
 }
