@@ -41,6 +41,8 @@ public class Player : MonoBehaviour
 	private bool returnInTime = false;
 
 	public Slider timeControlLine;
+	public Transform attackCheck;
+	public Transform jumpAttackCheck;
 
 	
 	void Awake ()
@@ -75,6 +77,10 @@ public class Player : MonoBehaviour
 
 		if (Input.GetButtonDown ("Throw")) {
 			Throw ();
+		}
+
+		if (Input.GetButtonDown ("Attack")) {
+			Attack ();
 		}
 
 		timeControlLine.value = positions.Count;
@@ -182,14 +188,31 @@ public class Player : MonoBehaviour
 	public void Throw ()
 	{
 		if (Time.time > nextFire) {
-			anim.SetTrigger ("Throw");
+			if (grounded) {
+				anim.SetTrigger ("Throw");			
+			} else {
+				anim.SetTrigger ("JumpThrow");
+			}
 			nextFire = Time.time + fireRate;
 			Instantiate (kunai, kunaiSpawn.position, kunaiSpawn.rotation);
 		}
 	}
 
-//	void OnCollisionEnter2D (Collision2D other)
-//	{
-//		print (other.gameObject.tag);
-//	}
+	public void Attack ()
+	{
+		if (grounded) {
+			anim.SetTrigger ("MeleeAttack");
+			RaycastHit2D hit = Physics2D.Linecast (transform.position, attackCheck.position, 1 << LayerMask.NameToLayer ("Enemies"));
+			if (hit.collider != null && hit.collider.CompareTag ("Enemy")) {
+				hit.collider.gameObject.GetComponent<Enemy> ().die ();
+			}
+		} else {
+			anim.SetTrigger ("JumpAttack");
+			RaycastHit2D hit = Physics2D.Linecast (transform.position, jumpAttackCheck.position, 1 << LayerMask.NameToLayer ("Enemies"));
+			if (hit.collider != null && hit.collider.CompareTag ("Enemy")) {
+				hit.collider.gameObject.GetComponent<Enemy> ().die ();
+			}
+		}
+	}
+
 }
