@@ -5,11 +5,15 @@ using System.Collections.Generic;
 public class Enemy : MonoBehaviour
 {
 
-	public float bounds;
+	public int health = 1;
 	public float speed;
-	public bool dead;
-	public AudioClip soundOh;
+	public float bounds;
 
+	[Header("Audio")]
+	public AudioClip
+		soundOh;
+
+	private bool dead;
 	private bool facingRight = true;
 	private int direction = 1; 
 	private float startPositionX;
@@ -91,10 +95,10 @@ public class Enemy : MonoBehaviour
 	public void die ()
 	{
 		AudioSource.PlayClipAtPoint (soundOh, transform.position);
-		GetComponent<Animator> ().SetTrigger ("Dead");
+		anim.SetTrigger ("Dead");
 		GetComponent<Collider2D> ().enabled = false;
-		GetComponent<Rigidbody2D> ().isKinematic = true;
-		GetComponent<Enemy> ().dead = true;
+		rb2d.isKinematic = true;
+		dead = true;
 		transform.position += new Vector3 (0, -.2f, 0);
 	}
 
@@ -110,5 +114,17 @@ public class Enemy : MonoBehaviour
 		rb2d.isKinematic = false;
 		returnInTime = false;
 		anim.enabled = true;
+	}
+
+	public void TakeDamage (int damage)
+	{
+		health -= damage;
+		//		healthSlider.value = health;
+		
+		//		aud.clip = soundNo;
+		//		aud.Play ();
+		if (health == 0) {
+			die ();
+		}
 	}
 }

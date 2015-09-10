@@ -10,22 +10,31 @@ public class Player : MonoBehaviour
 	[HideInInspector]
 	public bool
 		facingRight = true;
-	[HideInInspector]
-	public bool
-		jump = false;
-	
+	public int health = 3;
 	public float moveForce = 365f;
 	public float maxSpeed = 5f;
 	public float jumpForce = 1000f;
-	public Transform groundCheck;
-	public bool dead = false;
-	public GameObject kunai;
-	public Transform kunaiSpawn;
 	public float fireRate;
 
-	public Slider healthSlider;
 
-	public int health = 3;
+
+	[Header("Audio")]
+	public AudioClip
+		soundJump;
+	public AudioClip soundDie;
+	public AudioClip soundNo;
+
+	[Header("References")]
+	public Slider
+		healthSlider;
+	public GameObject kunai;
+	public Transform kunaiSpawn;
+	public Transform groundCheck;
+
+
+
+	private bool jump = false;
+	private bool dead = false;
 //	public int Health {
 //		get { return health; }
 //		set { 
@@ -36,9 +45,7 @@ public class Player : MonoBehaviour
 
 	private float nextFire;
 
-	public AudioClip soundJump;
-	public AudioClip soundDie;
-	public AudioClip soundNo;
+
 	
 	private bool grounded = false;
 	private Animator anim;
@@ -96,10 +103,6 @@ public class Player : MonoBehaviour
 				Attack ();
 			}
 
-			if (health == 0) {
-				die ();
-			}
-
 			timeControlLine.value = positions.Count;
 		}
 
@@ -121,6 +124,8 @@ public class Player : MonoBehaviour
 
 			anim.SetFloat ("Speed", Mathf.Abs (moveSpeed));
 			transform.position += new Vector3 (moveSpeed, 0, 0) * .2f;
+//			print (Vector2.right * moveSpeed * 100f * Time.fixedDeltaTime);
+//			rb2d.AddForce (Vector2.right * moveSpeed * 1000f * Time.fixedDeltaTime);
 		
 			if (moveSpeed > 0 && !facingRight) {
 				Flip ();
@@ -228,13 +233,13 @@ public class Player : MonoBehaviour
 			anim.SetTrigger ("MeleeAttack");
 			RaycastHit2D hit = Physics2D.Linecast (transform.position, attackCheck.position, 1 << LayerMask.NameToLayer ("Enemies"));
 			if (hit.collider != null && hit.collider.CompareTag ("Enemy")) {
-				hit.collider.gameObject.GetComponent<Enemy> ().die ();
+				hit.collider.gameObject.GetComponent<Enemy> ().TakeDamage (1);
 			}
 		} else {
 			anim.SetTrigger ("JumpAttack");
 			RaycastHit2D hit = Physics2D.Linecast (transform.position, jumpAttackCheck.position, 1 << LayerMask.NameToLayer ("Enemies"));
 			if (hit.collider != null && hit.collider.CompareTag ("Enemy")) {
-				hit.collider.gameObject.GetComponent<Enemy> ().die ();
+				hit.collider.gameObject.GetComponent<Enemy> ().TakeDamage (1);
 			}
 		}
 	}
@@ -246,6 +251,16 @@ public class Player : MonoBehaviour
 		
 		aud.clip = soundNo;
 		aud.Play ();
+
+		if (health == 0) {
+			die ();
+		}
+	}
+
+	public void AddHealth (int heal)
+	{
+		health += heal;
+		healthSlider.value = health;
 	}
 
 }

@@ -11,6 +11,7 @@ GameObject:
   - 50: {fileID: 5089404}
   - 114: {fileID: 11447508}
   - 58: {fileID: 5897344}
+  - 114: {fileID: 11440956}
   m_Layer: 0
   m_Name: Kunai
   m_TagString: Kunai
@@ -69,8 +70,8 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: .0500000007
-  m_GravityScale: 1
-  m_IsKinematic: 1
+  m_GravityScale: 0
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -88,6 +89,18 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: .150000006
+--- !u!114 &11440956
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 172870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 688b41830f441764888125b84406f40b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifetime: 3
 --- !u!114 &11447508
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -139,7 +152,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_IsKinematic
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: speed
@@ -148,6 +161,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_TagString
       value: Kunai
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_GravityScale
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: lifetime
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

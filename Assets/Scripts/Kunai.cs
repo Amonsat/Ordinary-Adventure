@@ -7,6 +7,12 @@ public class Kunai : MonoBehaviour
 	public float speed;
 
 	private Player player;
+	private Rigidbody2D rb2d;
+
+	void Awake ()
+	{
+		rb2d = GetComponent<Rigidbody2D> ();
+	}
 
 	// Use this for initialization
 	void Start ()
@@ -14,6 +20,7 @@ public class Kunai : MonoBehaviour
 //		GetComponent<Rigidbody> ().velocity = transform.forward * speed;
 		player = GameObject.FindGameObjectWithTag ("Player").GetComponent<Player> ();
 		speed *= player.facingRight ? 1 : -1;
+//		rb2d.AddForce (new Vector2 (speed * 1.5f, 0), ForceMode2D.Impulse);
 	}
 	
 	// Update is called once per frame

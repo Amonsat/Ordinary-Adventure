@@ -1,13 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Coin : MonoBehaviour
+public class Heart : MonoBehaviour
 {
+	void Update ()
+	{
+		transform.Rotate (Vector3.up * 2f);
+	}
+
 	void OnTriggerEnter2D (Collider2D other)
 	{
 		if (!other.gameObject.CompareTag ("Player"))
 			return;
-		GM.instance.Coins++;
+
+		other.gameObject.GetComponent<Player> ().AddHealth (1);
 		Destroy (gameObject);
 	}
 }
