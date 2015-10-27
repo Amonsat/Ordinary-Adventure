@@ -7,11 +7,11 @@ public class Kunai : MonoBehaviour
 	public float speed;
 
 	private Player player;
-	private Rigidbody2D rb2d;
+//	private Rigidbody2D rb2d;
 
 	void Awake ()
 	{
-		rb2d = GetComponent<Rigidbody2D> ();
+//		rb2d = GetComponent<Rigidbody2D> ();
 	}
 
 	// Use this for initialization

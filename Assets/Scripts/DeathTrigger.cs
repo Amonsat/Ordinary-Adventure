@@ -8,7 +8,7 @@ public class DeathTrigger : MonoBehaviour
 	{
 		if (other.gameObject.CompareTag ("Player")) {
 //			Application.LoadLevel (Application.loadedLevel);
-			other.gameObject.GetComponent<Player> ().die ();
+			other.gameObject.GetComponent<Player> ().Die ();
 		}
 	}
 }

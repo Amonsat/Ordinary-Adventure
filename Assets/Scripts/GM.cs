@@ -8,6 +8,7 @@ public class GM : MonoBehaviour
 	public Text coinsText;
 	public GameObject gameoverui;
 	public GameObject gamestartui;
+    public Text kunaiText;
 
 
 	public int Coins {

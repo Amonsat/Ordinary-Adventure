@@ -11,10 +11,11 @@ public class Player : MonoBehaviour
 	public bool
 		facingRight = true;
 	public int health = 3;
-	public float moveForce = 365f;
-	public float maxSpeed = 5f;
+//	public float moveForce = 365f;
+//	public float maxSpeed = 5f;
 	public float jumpForce = 1000f;
 	public float fireRate;
+    public float moveForce = .15f;
 
 
 
@@ -28,7 +29,7 @@ public class Player : MonoBehaviour
 	public Slider
 		healthSlider;
 	public GameObject kunai;
-	public Transform kunaiSpawn;
+	public Transform kunaiSpawn;    
 	public Transform groundCheck;
 
 
@@ -44,10 +45,20 @@ public class Player : MonoBehaviour
 //	}
 
 	private float nextFire;
+    private int kunaiCount;
+
+    public int KunaiCount
+    {
+        get { return kunaiCount; }
+        set
+        {
+            kunaiCount = value;
+            GM.instance.kunaiText.text = "Kunai: " + kunaiCount;
+        }
+    }
 
 
-	
-	private bool grounded = false;
+    private bool grounded = false;
 	private Animator anim;
 	private Rigidbody2D rb2d;
 	private AudioSource aud;
@@ -85,7 +96,8 @@ public class Player : MonoBehaviour
 				jump = true;
 			}
 
-			anim.SetBool ("Grounded", grounded);
+            if (anim.enabled)
+			    anim.SetBool ("Grounded", grounded);
 
 			if (Input.GetButton ("TimeControl")) {
 				ReturnInTime ();
@@ -117,32 +129,42 @@ public class Player : MonoBehaviour
 	{
 		Vector3 oldPosition = transform.position;
 
-		if (!dead) {
-			if (SystemInfo.deviceType == DeviceType.Desktop)
-				moveSpeed = Input.GetAxis ("Horizontal");
+		if (!dead)
+        {
+		    if (!returnInTime)
+		    {
+		        if (SystemInfo.deviceType == DeviceType.Desktop)
+		            moveSpeed = Input.GetAxis("Horizontal");
 
+		        if (anim.enabled)
+		            anim.SetFloat("Speed", Mathf.Abs(moveSpeed));
 
-			anim.SetFloat ("Speed", Mathf.Abs (moveSpeed));
-			transform.position += new Vector3 (moveSpeed, 0, 0) * .2f;
+		        transform.position += new Vector3(moveSpeed, 0, 0) * moveForce;
+
 //			print (Vector2.right * moveSpeed * 100f * Time.fixedDeltaTime);
 //			rb2d.AddForce (Vector2.right * moveSpeed * 1000f * Time.fixedDeltaTime);
-		
-			if (moveSpeed > 0 && !facingRight) {
-				Flip ();
-			} else if (moveSpeed < 0 && facingRight) {
-				Flip ();
-			}
-		
-			if (jump) {
-				aud.clip = soundJump;
-				aud.Play ();
-				anim.SetTrigger ("Jump");
-				rb2d.AddForce (new Vector2 (0f, jumpForce));
-				jump = false;
-			}
+
+		        if (moveSpeed > 0 && !facingRight)
+		        {
+		            Flip();
+		        }
+		        else if (moveSpeed < 0 && facingRight)
+		        {
+		            Flip();
+		        }
+
+		        if (jump)
+		        {
+		            aud.clip = soundJump;
+		            aud.Play();
+		            anim.SetTrigger("Jump");
+		            rb2d.AddForce(new Vector2(0f, jumpForce));
+		            jump = false;
+		        }
+		    }
 
 
-			if (returnInTime && positions.Count > 0) {
+		    if (returnInTime && positions.Count > 0) {
 				transform.position = positions.Pop ();
 				playerSpriteRenderer.sprite = sprites.Pop ();
 			}
@@ -164,7 +186,7 @@ public class Player : MonoBehaviour
 		transform.localScale = theScale;
 	}
 
-	public void die ()
+	public void Die ()
 	{
 		dead = true;
 		GetComponent<Collider2D> ().isTrigger = true;
@@ -176,13 +198,15 @@ public class Player : MonoBehaviour
 
 	public void Move (float speed)
 	{
+	    if (returnInTime) return;
 		moveSpeed = speed;
 	}
 
 	public void Jump ()
 	{
-//		print ("jump");
-		if (grounded)
+        //		print ("jump");
+        if (returnInTime) return;
+        if (grounded)
 			jump = true;
 	}
 
@@ -216,20 +240,19 @@ public class Player : MonoBehaviour
 
 	public void Throw ()
 	{
-		if (Time.time > nextFire) {
-			if (grounded) {
-				anim.SetTrigger ("Throw");			
-			} else {
-				anim.SetTrigger ("JumpThrow");
-			}
-			nextFire = Time.time + fireRate;
-			Instantiate (kunai, kunaiSpawn.position, kunaiSpawn.rotation);
-		}
+        if (returnInTime || kunaiCount <= 0) return;
+
+        if (!(Time.time > nextFire)) return;
+	    anim.SetTrigger(grounded ? "Throw" : "JumpThrow");
+	    nextFire = Time.time + fireRate;
+	    Instantiate (kunai, kunaiSpawn.position, kunaiSpawn.rotation);
+	    KunaiCount--;
 	}
 
 	public void Attack ()
 	{
-		if (grounded) {
+        if (returnInTime) return;
+        if (grounded) {
 			anim.SetTrigger ("MeleeAttack");
 			RaycastHit2D hit = Physics2D.Linecast (transform.position, attackCheck.position, 1 << LayerMask.NameToLayer ("Enemies"));
 			if (hit.collider != null && hit.collider.CompareTag ("Enemy")) {
@@ -253,7 +276,7 @@ public class Player : MonoBehaviour
 		aud.Play ();
 
 		if (health == 0) {
-			die ();
+			Die ();
 		}
 	}
 
@@ -262,5 +285,10 @@ public class Player : MonoBehaviour
 		health += heal;
 		healthSlider.value = health;
 	}
+
+    public void AddKunai()
+    {
+        KunaiCount++;
+    }
 
 }
