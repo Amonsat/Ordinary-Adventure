@@ -8980,6 +8980,10 @@ Prefab:
       propertyPath: timeControlLine
       value: 
       objectReference: {fileID: 524428502}
+    - target: {fileID: 11479754, guid: 1e21c9bad828d94488bb868cbdac3a50, type: 2}
+      propertyPath: moveForce
+      value: .200000003
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e21c9bad828d94488bb868cbdac3a50, type: 2}
   m_IsPrefabParent: 0
